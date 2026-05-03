@@ -1,0 +1,878 @@
+openapi: 3.1.0
+info:
+  # Do not change the title, if the title changes, the import paths will be broken
+  title: Api
+  version: 0.1.0
+  description: Web3 Job Marketplace API
+servers:
+  - url: /api
+    description: Base API path
+tags:
+  - name: health
+    description: Health operations
+  - name: categories
+    description: Job categories
+  - name: workers
+    description: Worker profiles
+  - name: bookings
+    description: Service bookings
+  - name: stats
+    description: Marketplace statistics
+  - name: messages
+    description: Private messaging
+
+paths:
+  /healthz:
+    get:
+      operationId: healthCheck
+      tags: [health]
+      summary: Health check
+      responses:
+        "200":
+          description: Healthy
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HealthStatus"
+
+  /categories:
+    get:
+      operationId: listCategories
+      tags: [categories]
+      summary: List all job categories
+      parameters:
+        - name: type
+          in: query
+          schema:
+            type: string
+            enum: [manual, online]
+        - name: industry
+          in: query
+          schema:
+            type: string
+        - name: search
+          in: query
+          schema:
+            type: string
+      responses:
+        "200":
+          description: List of job categories
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Category"
+
+  /categories/industries:
+    get:
+      operationId: listIndustries
+      tags: [categories]
+      summary: List distinct industries/groups
+      responses:
+        "200":
+          description: List of industries
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Industry"
+
+  /categories/{id}:
+    get:
+      operationId: getCategory
+      tags: [categories]
+      summary: Get a category by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Category details
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Category"
+        "404":
+          description: Not found
+
+  /workers:
+    get:
+      operationId: listWorkers
+      tags: [workers]
+      summary: List and search workers
+      parameters:
+        - name: type
+          in: query
+          schema:
+            type: string
+            enum: [manual, online]
+        - name: categoryId
+          in: query
+          schema:
+            type: integer
+        - name: search
+          in: query
+          schema:
+            type: string
+        - name: country
+          in: query
+          schema:
+            type: string
+        - name: state
+          in: query
+          schema:
+            type: string
+        - name: city
+          in: query
+          schema:
+            type: string
+        - name: minRate
+          in: query
+          schema:
+            type: number
+        - name: maxRate
+          in: query
+          schema:
+            type: number
+        - name: available
+          in: query
+          schema:
+            type: boolean
+        - name: minRating
+          in: query
+          schema:
+            type: number
+            minimum: 1
+            maximum: 5
+        - name: sortBy
+          in: query
+          schema:
+            type: string
+            enum: [newest, rating, completedJobs, rateAsc, rateDesc]
+      responses:
+        "200":
+          description: List of workers
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Worker"
+    post:
+      operationId: createWorker
+      tags: [workers]
+      summary: Create a worker profile
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateWorkerBody"
+      responses:
+        "201":
+          description: Worker created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Worker"
+
+  /workers/by-wallet/{wallet}:
+    get:
+      operationId: getWorkerByWallet
+      tags: [workers]
+      summary: Get worker profile by wallet address
+      parameters:
+        - name: wallet
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Worker profile
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Worker"
+        "404":
+          description: Not found
+
+  /workers/{id}:
+    get:
+      operationId: getWorker
+      tags: [workers]
+      summary: Get worker profile by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Worker profile
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Worker"
+        "404":
+          description: Not found
+    put:
+      operationId: updateWorker
+      tags: [workers]
+      summary: Update a worker profile
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateWorkerBody"
+      responses:
+        "200":
+          description: Updated worker
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Worker"
+
+  /bookings:
+    get:
+      operationId: listBookings
+      tags: [bookings]
+      summary: List bookings
+      parameters:
+        - name: workerId
+          in: query
+          schema:
+            type: integer
+        - name: clientWallet
+          in: query
+          schema:
+            type: string
+        - name: status
+          in: query
+          schema:
+            type: string
+            enum: [pending, confirmed, completed, cancelled]
+      responses:
+        "200":
+          description: List of bookings
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Booking"
+    post:
+      operationId: createBooking
+      tags: [bookings]
+      summary: Create a new booking
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateBookingBody"
+      responses:
+        "201":
+          description: Booking created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Booking"
+
+  /bookings/{id}:
+    get:
+      operationId: getBooking
+      tags: [bookings]
+      summary: Get a booking by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Booking details
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Booking"
+        "404":
+          description: Not found
+    patch:
+      operationId: updateBookingStatus
+      tags: [bookings]
+      summary: Update booking status or tx hash
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateBookingBody"
+      responses:
+        "200":
+          description: Updated booking
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Booking"
+
+  /stats/overview:
+    get:
+      operationId: getMarketplaceStats
+      tags: [stats]
+      summary: Get marketplace overview stats
+      responses:
+        "200":
+          description: Marketplace statistics
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MarketplaceStats"
+
+  /stats/top-categories:
+    get:
+      operationId: getTopCategories
+      tags: [stats]
+      summary: Get top categories by worker count
+      responses:
+        "200":
+          description: Top categories
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/CategoryStat"
+
+  /stats/recent-bookings:
+    get:
+      operationId: getRecentBookings
+      tags: [stats]
+      summary: Get recent bookings feed
+      parameters:
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 10
+      responses:
+        "200":
+          description: Recent bookings
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Booking"
+
+  /messages:
+    post:
+      operationId: sendMessage
+      tags: [messages]
+      summary: Send a private message
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/SendMessageBody"
+      responses:
+        "201":
+          description: Message sent
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Message"
+
+  /messages/inbox/{wallet}:
+    get:
+      operationId: getInbox
+      tags: [messages]
+      summary: Get all conversations for a wallet
+      parameters:
+        - name: wallet
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: List of conversations
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Conversation"
+
+  /messages/conversation:
+    get:
+      operationId: getConversation
+      tags: [messages]
+      summary: Get messages between two wallets
+      parameters:
+        - name: walletA
+          in: query
+          required: true
+          schema:
+            type: string
+        - name: walletB
+          in: query
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Messages in conversation
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Message"
+
+  /messages/{id}/read:
+    patch:
+      operationId: markMessageRead
+      tags: [messages]
+      summary: Mark a message as read
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Message marked as read
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Message"
+
+components:
+  schemas:
+    HealthStatus:
+      type: object
+      properties:
+        status:
+          type: string
+      required:
+        - status
+
+    Category:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        type:
+          type: string
+          enum: [manual, online]
+        industry:
+          type: string
+        payLevel:
+          type: string
+          nullable: true
+        createdAt:
+          type: string
+          format: date-time
+      required:
+        - id
+        - name
+        - type
+        - industry
+        - createdAt
+
+    Industry:
+      type: object
+      properties:
+        industry:
+          type: string
+        type:
+          type: string
+          enum: [manual, online]
+        count:
+          type: integer
+      required:
+        - industry
+        - type
+        - count
+
+    Worker:
+      type: object
+      properties:
+        id:
+          type: integer
+        walletAddress:
+          type: string
+        displayName:
+          type: string
+        bio:
+          type: string
+          nullable: true
+        avatarUrl:
+          type: string
+          nullable: true
+        categoryId:
+          type: integer
+        categoryName:
+          type: string
+        categoryType:
+          type: string
+          enum: [manual, online]
+        industry:
+          type: string
+        rateAmount:
+          type: string
+        rateCurrency:
+          type: string
+        rateType:
+          type: string
+          enum: [hourly, task]
+        country:
+          type: string
+          nullable: true
+        state:
+          type: string
+          nullable: true
+        city:
+          type: string
+          nullable: true
+        paymentAddress:
+          type: string
+          nullable: true
+          description: Native wallet address for BTC/SOL payments (optional for ETH/MATIC/BNB/USDC/USDT workers)
+        advanceDepositPercent:
+          type: integer
+          minimum: 5
+          maximum: 20
+          nullable: true
+        isAvailable:
+          type: boolean
+        completedJobs:
+          type: integer
+        rating:
+          type: number
+          nullable: true
+        createdAt:
+          type: string
+          format: date-time
+      required:
+        - id
+        - walletAddress
+        - displayName
+        - categoryId
+        - categoryName
+        - categoryType
+        - industry
+        - rateAmount
+        - rateCurrency
+        - rateType
+        - isAvailable
+        - completedJobs
+        - createdAt
+
+    CreateWorkerBody:
+      type: object
+      properties:
+        walletAddress:
+          type: string
+        displayName:
+          type: string
+        bio:
+          type: string
+          nullable: true
+        avatarUrl:
+          type: string
+          nullable: true
+        categoryId:
+          type: integer
+        rateAmount:
+          type: string
+        rateCurrency:
+          type: string
+          enum: [ETH, MATIC, USDC, USDT, BNB, BTC, SOL]
+        rateType:
+          type: string
+          enum: [hourly, task]
+        country:
+          type: string
+          nullable: true
+        state:
+          type: string
+          nullable: true
+        city:
+          type: string
+          nullable: true
+        paymentAddress:
+          type: string
+          nullable: true
+          description: Native wallet address for BTC/SOL payments
+        advanceDepositPercent:
+          type: integer
+          minimum: 5
+          maximum: 20
+          nullable: true
+      required:
+        - walletAddress
+        - displayName
+        - categoryId
+        - rateAmount
+        - rateCurrency
+        - rateType
+
+    UpdateWorkerBody:
+      type: object
+      properties:
+        displayName:
+          type: string
+        bio:
+          type: string
+          nullable: true
+        avatarUrl:
+          type: string
+          nullable: true
+        rateAmount:
+          type: string
+        rateCurrency:
+          type: string
+          enum: [ETH, MATIC, USDC, USDT, BNB, BTC, SOL]
+        rateType:
+          type: string
+          enum: [hourly, task]
+        country:
+          type: string
+          nullable: true
+        state:
+          type: string
+          nullable: true
+        city:
+          type: string
+          nullable: true
+        paymentAddress:
+          type: string
+          nullable: true
+          description: Native wallet address for BTC/SOL payments
+        advanceDepositPercent:
+          type: integer
+          minimum: 5
+          maximum: 20
+          nullable: true
+        isAvailable:
+          type: boolean
+
+    Booking:
+      type: object
+      properties:
+        id:
+          type: integer
+        workerId:
+          type: integer
+        workerName:
+          type: string
+        workerWallet:
+          type: string
+        clientWallet:
+          type: string
+        categoryName:
+          type: string
+        description:
+          type: string
+          nullable: true
+        rateAmount:
+          type: string
+        rateCurrency:
+          type: string
+        status:
+          type: string
+          enum: [pending, confirmed, completed, cancelled]
+        txHash:
+          type: string
+          nullable: true
+        scheduledAt:
+          type: string
+          format: date-time
+          nullable: true
+        clientRating:
+          type: integer
+          minimum: 1
+          maximum: 5
+          nullable: true
+        clientReview:
+          type: string
+          nullable: true
+        createdAt:
+          type: string
+          format: date-time
+      required:
+        - id
+        - workerId
+        - workerName
+        - workerWallet
+        - clientWallet
+        - categoryName
+        - rateAmount
+        - rateCurrency
+        - status
+        - createdAt
+
+    CreateBookingBody:
+      type: object
+      properties:
+        workerId:
+          type: integer
+        clientWallet:
+          type: string
+        description:
+          type: string
+          nullable: true
+        scheduledAt:
+          type: string
+          format: date-time
+          nullable: true
+      required:
+        - workerId
+        - clientWallet
+
+    UpdateBookingBody:
+      type: object
+      properties:
+        status:
+          type: string
+          enum: [pending, confirmed, completed, cancelled]
+        txHash:
+          type: string
+          nullable: true
+        clientRating:
+          type: integer
+          minimum: 1
+          maximum: 5
+          nullable: true
+        clientReview:
+          type: string
+          nullable: true
+
+    MarketplaceStats:
+      type: object
+      properties:
+        totalWorkers:
+          type: integer
+        availableWorkers:
+          type: integer
+        totalBookings:
+          type: integer
+        completedBookings:
+          type: integer
+        totalCategories:
+          type: integer
+        manualCategories:
+          type: integer
+        onlineCategories:
+          type: integer
+      required:
+        - totalWorkers
+        - availableWorkers
+        - totalBookings
+        - completedBookings
+        - totalCategories
+        - manualCategories
+        - onlineCategories
+
+    CategoryStat:
+      type: object
+      properties:
+        categoryId:
+          type: integer
+        categoryName:
+          type: string
+        industry:
+          type: string
+        type:
+          type: string
+          enum: [manual, online]
+        workerCount:
+          type: integer
+      required:
+        - categoryId
+        - categoryName
+        - industry
+        - type
+        - workerCount
+
+    Message:
+      type: object
+      properties:
+        id:
+          type: integer
+        fromWallet:
+          type: string
+        toWallet:
+          type: string
+        content:
+          type: string
+        isRead:
+          type: boolean
+        createdAt:
+          type: string
+          format: date-time
+      required:
+        - id
+        - fromWallet
+        - toWallet
+        - content
+        - isRead
+        - createdAt
+
+    Conversation:
+      type: object
+      properties:
+        otherWallet:
+          type: string
+        lastMessage:
+          type: string
+        lastMessageAt:
+          type: string
+          format: date-time
+        unreadCount:
+          type: integer
+      required:
+        - otherWallet
+        - lastMessage
+        - lastMessageAt
+        - unreadCount
+
+    SendMessageBody:
+      type: object
+      properties:
+        fromWallet:
+          type: string
+        toWallet:
+          type: string
+        content:
+          type: string
+      required:
+        - fromWallet
+        - toWallet
+        - content

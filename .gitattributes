@@ -1,0 +1,2 @@
+workchain-export.tar.gz filter=lfs diff=lfs merge=lfs -text
+workchain-source.zip filter=lfs diff=lfs merge=lfs -text

@@ -1,0 +1,66 @@
+Act as an expert Full-Stack Web3 Developer. I want you to build a functional prototype for a comprehensive job and service-seeking marketplace. 
+
+The core feature of this platform is that users can book both localized manual services and remote online work, and pay for these services exclusively using cryptocurrency (e.g., ETH, MATIC, or USDC). 
+
+Please outline the file structure, write the frontend and backend code, and provide the database schema. 
+
+### Core Requirements:
+1.  **User Roles:** * **Service Providers (Workers):** Can create a profile, select their specific job category from a pre-defined database list (manual or online), set their hourly/task rate in crypto, specify their location (for manual jobs), and accept bookings.
+    * **Service Seekers (Clients):** Can browse categories, search for specific jobs, view worker profiles, book a service slot, and initiate a crypto payment.
+2.  **Crypto Integration:**
+    * Integrate Web3 wallet connection (e.g., MetaMask, WalletConnect) using Ethers.js, Wagmi, or Web3.js. 
+    * When a Client books a Worker, generate a smart contract interaction or a direct wallet-to-wallet transaction prompt to hold (escrow) or transfer funds.
+3.  **UI/UX & Discovery:**
+    * Clean, mobile-responsive design. 
+    * **Search Bar:** A prominent search input to find specific services or jobs by keyword.
+    * **Location Filters:** Cascading dropdown menus for "Country," "State," and "City" to filter localized manual workers.
+    * Toggle or tabs to easily switch between "Local Manual Jobs" and "Remote Online Jobs."
+4.  **Database Seeding (Crucial):**
+    * You must seed the platform's job categories database with the following list of 400 jobs, categorized into "Manual/Hands-on" and "Online/Remote" types:
+
+[SEED DATA START]
+
+=== PART 1: MANUAL / HANDS-ON JOBS (Localized) ===
+
+Industry: Construction & Building Trades
+Jobs: General Construction Laborer, Bricklayer's Assistant / Hod Carrier, Concrete Mixer Operator, Rebar Tier, Demolition Worker, Scaffold Erector Assistant, Painter's Helper, Drywall Hanger Assistant, Roofer's Helper, Tile Setter's Assistant, Plumber's Helper, Electrician's Assistant, Trench Digger, Road Maintenance Worker, Asphalt Raker, Traffic Flagger / Controller, Heavy Equipment Cleaner, Tool Room Attendant, Site Cleanup Crew Member, Gravel Shoveler, Cement Mason Helper, Fence Installer Helper, Gutter Installer Helper, Insulation Worker Helper, Masonry Laborer.
+
+Industry: Agriculture, Farming & Fishing
+Jobs: Fruit Picker, Vegetable Harvester, General Farmhand, Tractor Driver Helper, Irrigation Pipe Mover, Livestock Feeder, Manual Milker, Egg Gatherer, Stable Hand / Stall Cleaner, Sheep Shearer's Assistant, Crop Loader, Grain Elevator Worker, Vineyard Pruner, Orchard Thinner, Pesticide Applicator Helper, Greenhouse Worker, Nursery Laborer, Logging Choker Setter, Timber Faller Assistant, Brush Clearer, Fishing Boat Deckhand, Fishing Net Mender, Aquaculture Pond Cleaner, Seaweed Harvester, Oyster Shucker.
+
+Industry: Manufacturing, Warehouse & Industrial
+Jobs: Assembly Line Worker, Packing Associate, Manual Sorting Clerk, Uncertified Forklift Operator, Manual Palletizer, Material Handler, Warehouse Order Picker, Box Maker, Product Labeler, Visual Quality Control Inspector, Machine Operator Assistant, Metal Polisher, Grinding Machine Operator, Foundry Laborer, Meatpacker, Poultry Processor, Cannery Worker, Bottling Line Worker, Textile Mill Worker, Garment Folder, Basic Sewing Machine Operator, Leather Cutter, Furniture Assembler, Woodworker's Assistant, Industrial Facility Cleaner.
+
+Industry: Hospitality & Food Service
+Jobs: Dishwasher, Busser / Dining Room Attendant, Food Preparation Worker, Basic Line Cook, Fry Cook, Fast Food Counter Attendant, Basic Barista, Ice Cream Scooper, Baker's Helper, Caterer's Setup Assistant, Banquet Setup Worker, Hotel Housekeeper, Hotel Laundry Attendant, Bellhop, Luggage Porter, Room Service Attendant, Valet Parker, Restaurant Host/Hostess, Bartender's Back / Barback, Food Cart Vendor, Street Food Stall Operator, Buffet Attendant, Coffee Cart Operator, Cafeteria Worker, Kitchen Porter.
+
+Industry: Cleaning, Maintenance & Facilities
+Jobs: Janitor, Custodian, Street Sweeper, Garbage / Refuse Collector, Recycling Sorter, Window Cleaner, Carpet Cleaner, Domestic Maid, Pool Cleaner, Lawn Care Worker, Landscaper, Groundskeeper, Tree Trimmer's Helper, Pest Control Assistant, Chimney Sweep Assistant, Air Duct Cleaner Helper, Car Wash Attendant, Auto Detailer, Snow Removal Worker / Shoveler, Graffiti Remover, Park Maintenance Worker, Stadium Cleanup Crew, Public Restroom Attendant, Dumpster Cleaner, Biohazard / Crime Scene Cleanup Assistant.
+
+Industry: Transportation, Delivery & Logistics
+Jobs: Hand Truck Operator, Furniture Mover, Moving Van Driver's Assistant, Bicycle / Foot Courier, App-Based Food Delivery Driver, Package Loader, Freight Unloader, Loading Dockworker, Airport Baggage Handler, Rickshaw Puller, Pedicab Driver, Taxi Driver, Unlicensed Shuttle Bus Driver, Delivery Truck Helper, Mailroom Clerk, Route Driver's Helper, Warehouse Stocker, Manual Inventory Counter, Parking Lot Attendant, Toll Booth Operator, Auto Dealership Valeter, Auto Parts Delivery Driver, Tire Repair Helper, Boat Dockhand, Train Yard Laborer.
+
+Industry: Retail, Markets & Street Vending
+Jobs: Grocery Bagger, Retail Shelf Stocker, Shopping Cart Pusher, Produce Display Worker, Entry-Level Cashier, Store Greeter, Flyer Distributor, Promotional Sign Spinner, Flea Market Vendor, Scrap Metal Collector, Newspaper Delivery Person, Flower Seller, Fruit Stand Operator, Shoe Shiner, Event Ticket Taker, Amusement Park Ride Attendant, Carnival Game Operator, Concession Stand Worker, Gas Station Pump Attendant, Car Rental Fleet Cleaner, Thrift Store Clothing Sorter, Pawn Shop Assistant, Pet Store Cage Cleaner, Plant Nursery Retail Helper, Vending Machine Restocker.
+
+Industry: Personal Services, Domestic & Miscellaneous
+Jobs: Informal Nanny / Babysitter, Unlicensed Eldercare Companion, Dog Walker, Pet Groomer's Assistant, Tailor's Assistant / Alterations Helper, Cobbler's Assistant, Dry Cleaning Presser, Laundromat Attendant, Basic Seamstress, Funeral Home Assistant, Manual Grave Digger, Theater Stagehand, Prop Mover, Event Setup Crew Member, Entry-Level Security Guard (Unarmed), Bouncer, School Crossing Guard, Manual Car Pusher, Rickshaw / Bicycle Mechanic Helper, Scrap Wood Collector, Rag Picker / Textile Recycler, Manual Water Carrier, Charcoal Burner's Helper, Brick Kiln Worker, Day Laborer.
+
+
+=== PART 2: ONLINE / REMOTE JOBS (Global) ===
+
+Category: Low Pay (Entry-Level / Minimal Specialized Skills / Gig Work)
+Jobs: General Data Entry Clerk, Online Survey Taker, General Virtual Assistant, Customer Support Chat Agent, Email Support Representative, General Transcriptionist, Micro-task Worker (e.g., MTurk), Search Engine Evaluator, Captcha Solver, Basic Website Tester, Mobile App Tester, Social Media Moderator, Online Forum Moderator, Content Reviewer / Flagging Agent, Basic Proofreader, Virtual Receptionist, Telemarketer, Appointment Setter, Lead Generation Researcher, Data Scraper / Miner, Image Tagger / Annotator, Audio / Video Annotator, Video Captioner, Conversational Language Tutor, Resume Formatter, General Online Researcher, Online Mystery Shopper, E-commerce Product Lister, Virtual Travel Booking Agent, Dropshipping Assistant, Online Mock Juror, Background Noise Removal Specialist, Basic Video Editor (Shorts/Reels), Canva Template Creator, Pinterest Pin Designer, Podcast Show Notes Writer, Affiliate Link Poster, Community Manager Assistant, Tier 1 Tech Support, Booking Coordinator, Virtual Concierge, Online Personal Shopper, Data Cleaning Assistant, Basic AI Prompter / QA, Machine Translation Reviewer, Subtitle Synchronizer, Online English Teacher (No Degree), Homework Helper, Virtual Listener / Companion, Beta Reader, eBook Formatter, Self-Publishing Assistant, Beginner Stock Photo Contributor, Printable Planner Designer, Greeting Card Writer, Playlist Curator, Social Media Engagement Specialist, Influencer Outreach Assistant, Online B2B Researcher, CRM Data Updater, Webinar Moderator, Presentation Formatter, Online Event Assistant, Directory Listing Specialist, Online Data Verifier.
+
+Category: Medium Pay (Skilled / Experienced Professionals)
+Jobs: Freelance Copywriter, Niche Content Writer, SEO Specialist, Social Media Manager, Graphic Designer, UI/UX Designer (Junior to Mid-level), Front-End Web Developer, WordPress Developer, Digital Marketing Specialist, Email Marketing Manager, Tier 2/3 Technical Support Engineer, Remote HR Generalist, Recruiter / Talent Acquisition Specialist, Executive Virtual Assistant, Project Coordinator, Subject Expert Online Tutor, Test Prep Coach, Long-form Video Editor, 2D Animator, Audio Engineer / Podcast Producer, Grant Writer, Technical Writer, Medical Transcriptionist, Legal Transcriptionist, Remote Bookkeeper, Tax Preparer, Financial Paraplanner, Online Business Manager (OBM), Affiliate Marketing Manager, E-commerce Store Manager, PPC / Paid Ads Campaign Manager, Facebook Ads Specialist, Google Ads Specialist, Conversion Rate Optimizer (CRO), Influencer Marketing Manager, Digital PR Specialist, Press Release Writer, YouTube Scriptwriter, Ghostwriter, Certified Translation Specialist, Instructional Designer, E-learning Developer, Manual QA Tester, Automated Software Tester, Junior Database Administrator, IT Helpdesk Manager, Cloud Support Associate, Salesforce Administrator, Data Analyst, Business Analyst, Market Research Analyst, Operations Analyst, Remote Logistics Coordinator, Supply Chain Analyst, Customer Success Manager, Account Manager, SaaS Sales Representative, Business Development Representative, Technical Recruiter, Diversity & Inclusion Consultant, Online Life Coach, Career Counselor / Coach, Telehealth Nutritionist / Dietitian, Online Personal Trainer, Virtual Yoga Instructor, Virtual Music Teacher, Online Art Instructor, Virtual Voice Coach, Presentation Skills Coach, Online Arbitrage Specialist.
+
+Category: High Pay (Advanced Skills / Tech / Medical / Leadership)
+Jobs: Senior Software Engineer, Full Stack Developer, Backend Engineer, DevOps Engineer, Cloud Architect (AWS/Azure/GCP), Site Reliability Engineer (SRE), Machine Learning Engineer, Artificial Intelligence (AI) Researcher, Senior Data Scientist, Data Engineer, Blockchain Developer, Smart Contract Auditor, Cybersecurity Analyst, Penetration Tester (Ethical Hacker), Information Security Manager, Remote IT Director, Fractional Chief Technology Officer (CTO), Chief Information Security Officer (CISO), Enterprise Architect, Solutions Architect, Senior UI/UX Designer, Senior Product Designer, Product Manager, Group Product Manager, VP of Product, Engineering Manager, Senior Scrum Master, Agile Coach, Program Manager, IT Portfolio Manager, Telehealth Physician (MD/DO), Teleradiologist, Telepsychiatrist, Remote Nurse Practitioner (NP), Telehealth Pharmacist, Telemedicine Medical Director, Clinical Trial Manager, Biostatistician, Bioinformatics Scientist, Senior Medical Coder / Auditor, Remote Corporate Lawyer, Intellectual Property Attorney, Remote Contract Negotiator, Fractional General Counsel, Fractional Chief Financial Officer (CFO), Remote Financial Controller, Senior Investment Analyst, Quantitative Developer, Remote Actuary, Director of E-commerce, Fractional Chief Marketing Officer (CMO), VP of Marketing, Head of Growth / Growth Hacker, VP of Sales, Director of Customer Success, Senior Management Consultant, Corporate Strategy Consultant, Organizational Development Consultant, Executive Leadership Coach, Principal Data Analyst, Lead Game Developer, Unreal/Unity Engine Specialist, Quantitative Analyst (Quant), Remote Patent Examiner, Systems Software Developer.
+
+[SEED DATA END]
+
+### Technical Stack Request:
+Choose a modern, fast tech stack suitable for this (e.g., Next.js with Tailwind CSS for the frontend, Node.js/Express for the backend, MongoDB or PostgreSQL for the database, and Web3/Ethers for the crypto payments).
+
+Please start by providing the initial project setup commands, the database schema/models (ensuring the jobs and location data structure is well organized), and the code for the main search/filtering UI component.
