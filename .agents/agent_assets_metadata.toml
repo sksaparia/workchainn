@@ -1,0 +1,14 @@
+uploads = []
+generated = []
+
+[[outputs]]
+id = "AEUgfzzmM9sRrBqNF3aH4"
+uri = "file://workchain-export.tar.gz"
+type = "unspecified"
+title = "WorkChain — Full Source Code Export"
+
+[[outputs]]
+id = "DZ8WBmPRZxr-CwpqzZonq"
+uri = "file://workchain-source.zip"
+type = "unspecified"
+title = "WorkChain — Full Source Code (ZIP) — Click to Download"
