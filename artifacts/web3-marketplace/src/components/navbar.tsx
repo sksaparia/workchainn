@@ -1,27 +1,26 @@
 import { Link, useLocation } from "wouter";
-import { useWeb3 } from "@/lib/web3";
+import { useAuth } from "@/lib/auth";
 import { Button } from "@/components/ui/button";
-import { Wallet, Menu, X, Hexagon, MessageSquare, LayoutDashboard } from "lucide-react";
+import { Wallet, Menu, X, Hexagon, MessageSquare, LayoutDashboard, LogOut, LogIn, User } from "lucide-react";
 import { useState } from "react";
 import { useGetInbox } from "@workspace/api-client-react";
 
 export function Navbar() {
-  const { address, isConnecting, connect, disconnect } = useWeb3();
+  const { user, isAuthenticated, walletAddress, logout } = useAuth();
   const [location] = useLocation();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
-  const { data: inbox } = useGetInbox(address ?? "", {
-    query: { enabled: !!address, refetchInterval: 10000 }
+  const { data: inbox } = useGetInbox(walletAddress ?? user?.id ?? "", {
+    query: { enabled: !!(walletAddress || user?.id), refetchInterval: 10000 }
   });
 
   const totalUnread = inbox?.reduce((sum, c) => sum + c.unreadCount, 0) ?? 0;
-
   const formatAddress = (addr: string) => `${addr.substring(0, 6)}...${addr.substring(addr.length - 4)}`;
 
   const navLinks = [
-    { href: "/explore",   label: "Explore" },
-    { href: "/register",  label: "Become a Worker" },
-    { href: "/bookings",  label: "My Bookings" },
+    { href: "/explore",  label: "Explore" },
+    { href: "/register", label: "Become a Worker" },
+    { href: "/bookings", label: "My Bookings" },
   ];
 
   const isActive = (href: string) => location === href;
@@ -50,7 +49,6 @@ export function Navbar() {
               </Link>
             ))}
 
-            {/* Messages with unread badge */}
             <Link
               href="/messages"
               className={`text-sm uppercase tracking-wider font-medium transition-colors flex items-center gap-1.5 ${
@@ -66,8 +64,7 @@ export function Navbar() {
               )}
             </Link>
 
-            {/* Dashboard (workers only) */}
-            {address && (
+            {isAuthenticated && (
               <Link
                 href="/dashboard"
                 className={`text-sm uppercase tracking-wider font-medium transition-colors flex items-center gap-1.5 ${
@@ -81,22 +78,33 @@ export function Navbar() {
           </div>
         </div>
 
-        <div className="hidden md:flex items-center gap-4">
-          {address ? (
-            <div className="flex items-center gap-4">
-              <div className="flex items-center gap-2 px-3 py-1.5 border border-border bg-card/50 text-sm font-mono text-muted-foreground">
-                <div className="w-2 h-2 rounded-full bg-primary animate-pulse" />
-                {formatAddress(address)}
+        <div className="hidden md:flex items-center gap-3">
+          {isAuthenticated ? (
+            <div className="flex items-center gap-3">
+              {/* Wallet indicator */}
+              {walletAddress && (
+                <div className="flex items-center gap-2 px-3 py-1.5 border border-border bg-card/50 text-xs font-mono text-muted-foreground">
+                  <div className="w-2 h-2 rounded-full bg-primary animate-pulse" />
+                  {formatAddress(walletAddress)}
+                </div>
+              )}
+              {/* User identity */}
+              <div className="flex items-center gap-2 px-3 py-1.5 border border-border bg-card/50 text-xs text-muted-foreground max-w-[140px]">
+                <User className="w-3.5 h-3.5 shrink-0" />
+                <span className="truncate">{user?.name ?? user?.email ?? user?.phone}</span>
               </div>
-              <Button variant="outline" size="sm" onClick={disconnect} className="uppercase text-xs tracking-wider rounded-none">
-                Disconnect
+              <Button variant="outline" size="sm" onClick={logout} className="uppercase text-xs tracking-wider rounded-none gap-1.5">
+                <LogOut className="w-3.5 h-3.5" />
+                Sign Out
               </Button>
             </div>
           ) : (
-            <Button onClick={connect} disabled={isConnecting} className="uppercase tracking-wider rounded-none">
-              <Wallet className="w-4 h-4 mr-2" />
-              {isConnecting ? "Connecting..." : "Connect Wallet"}
-            </Button>
+            <Link href="/auth">
+              <Button className="uppercase tracking-wider rounded-none gap-2">
+                <LogIn className="w-4 h-4" />
+                Sign In
+              </Button>
+            </Link>
           )}
         </div>
 
@@ -135,7 +143,7 @@ export function Navbar() {
               </span>
             )}
           </Link>
-          {address && (
+          {isAuthenticated && (
             <Link
               href="/dashboard"
               className={`block p-2 text-sm uppercase tracking-wider font-medium border-l-2 flex items-center gap-2 ${
@@ -148,21 +156,30 @@ export function Navbar() {
             </Link>
           )}
           <div className="pt-4 border-t border-border mt-2">
-            {address ? (
+            {isAuthenticated ? (
               <div className="flex flex-col gap-3">
-                <div className="flex items-center gap-2 px-3 py-2 border border-border bg-card/50 text-sm font-mono text-muted-foreground">
-                  <div className="w-2 h-2 rounded-full bg-primary animate-pulse" />
-                  {formatAddress(address)}
+                <div className="flex items-center gap-2 px-3 py-2 border border-border bg-card/50 text-sm text-muted-foreground">
+                  <User className="w-4 h-4" />
+                  <span className="truncate">{user?.name ?? user?.email ?? user?.phone}</span>
                 </div>
-                <Button variant="outline" className="w-full uppercase text-xs tracking-wider rounded-none" onClick={() => { disconnect(); setMobileMenuOpen(false); }}>
-                  Disconnect
+                {walletAddress && (
+                  <div className="flex items-center gap-2 px-3 py-2 border border-border bg-card/50 text-xs font-mono text-muted-foreground">
+                    <div className="w-2 h-2 rounded-full bg-primary animate-pulse" />
+                    {formatAddress(walletAddress)}
+                  </div>
+                )}
+                <Button variant="outline" className="w-full uppercase text-xs tracking-wider rounded-none gap-2" onClick={() => { logout(); setMobileMenuOpen(false); }}>
+                  <LogOut className="w-3.5 h-3.5" />
+                  Sign Out
                 </Button>
               </div>
             ) : (
-              <Button className="w-full uppercase tracking-wider rounded-none" onClick={() => { connect(); setMobileMenuOpen(false); }} disabled={isConnecting}>
-                <Wallet className="w-4 h-4 mr-2" />
-                {isConnecting ? "Connecting..." : "Connect Wallet"}
-              </Button>
+              <Link href="/auth" onClick={() => setMobileMenuOpen(false)}>
+                <Button className="w-full uppercase tracking-wider rounded-none gap-2">
+                  <LogIn className="w-4 h-4" />
+                  Sign In / Create Account
+                </Button>
+              </Link>
             )}
           </div>
         </div>

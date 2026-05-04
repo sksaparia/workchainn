@@ -3,9 +3,9 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { Web3Provider } from "@/lib/web3";
+import { AuthProvider } from "@/lib/auth";
 import NotFound from "@/pages/not-found";
 
-// Pages
 import Home from "@/pages/home";
 import Explore from "@/pages/explore";
 import WorkerProfile from "@/pages/worker-profile";
@@ -14,6 +14,7 @@ import Bookings from "@/pages/bookings";
 import Messages from "@/pages/messages";
 import Dashboard from "@/pages/dashboard";
 import EditProfile from "@/pages/edit-profile";
+import AuthPage from "@/pages/auth";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -35,6 +36,7 @@ function Router() {
       <Route path="/messages" component={Messages} />
       <Route path="/dashboard" component={Dashboard} />
       <Route path="/edit-profile" component={EditProfile} />
+      <Route path="/auth" component={AuthPage} />
       <Route component={NotFound} />
     </Switch>
   );
@@ -45,10 +47,12 @@ function App() {
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>
         <Web3Provider>
-          <WouterRouter base={import.meta.env.BASE_URL.replace(/\/$/, "")}>
-            <Router />
-          </WouterRouter>
-          <Toaster />
+          <AuthProvider>
+            <WouterRouter base={import.meta.env.BASE_URL.replace(/\/$/, "")}>
+              <Router />
+            </WouterRouter>
+            <Toaster />
+          </AuthProvider>
         </Web3Provider>
       </TooltipProvider>
     </QueryClientProvider>
