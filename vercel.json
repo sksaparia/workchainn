@@ -1,7 +1,7 @@
 {
   "installCommand": "corepack enable && corepack prepare pnpm@9.5.0 --activate && pnpm install",
   "buildCommand": "pnpm run build",
-  "outputDirectory": "artifacts/web3-marketplace/dist",
+  "outputDirectory": "artifacts/web3-marketplace/dist/public",
   "build": {
     "env": {
       "NODE_VERSION": "20.11.0"
